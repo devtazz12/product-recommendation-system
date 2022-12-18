@@ -1,0 +1,212 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% comment %} own css link {% endcomment %}
+    {% comment %}own JavaScript link {% endcomment %}
+    
+       {% block link %}{% endblock link %}
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.2/examples/carousel/">
+
+    <!-- Bootstrap core CSS -->
+<link href="/docs/4.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <title> {% block title %}{% endblock title %} | sample</title>
+    
+    <style>
+     
+      body {
+        padding-bottom: 3rem;
+        color: #5a5a5a;
+      }
+      .btn:hover{
+        color:white;    
+      }
+      
+      
+      /* CUSTOMIZE THE CAROUSEL
+      -------------------------------------------------- */
+      
+      /* Carousel base class */
+      .carousel {
+        margin-bottom: 4rem;
+      }
+      /* Since positioning the image, we need to help out the caption */
+      .carousel-caption {
+        bottom: 3rem;
+        z-index: 10;
+      }
+      
+      /* Declare heights because of positioning of img element */
+      .carousel-item {
+        height: 32rem;
+      }
+      .carousel-item > img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        min-width: 100%;
+        height: 32rem;
+      }
+      
+      
+      /* MARKETING CONTENT
+      -------------------------------------------------- */
+      
+      /* Center align the text within the three columns below the carousel */
+      .marketing .col-lg-4 {
+        margin-bottom: 1.5rem;
+        text-align: center;
+      }
+      .marketing h2 {
+        font-weight: 400;
+      }
+      .marketing .col-lg-4 p {
+        margin-right: .75rem;
+        margin-left: .75rem;
+      }
+
+      {% comment %} this is for pragraph line limit {% endcomment %}
+      .card-text{
+        text-align: justify;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      
+      
+      /* Featurettes
+      ------------------------- */
+      
+      .featurette-divider {
+        margin: 5rem 0; /* Space out the Bootstrap <hr> more */
+      }
+      
+      /* Thin out the marketing headings */
+      .featurette-heading {
+        font-weight: 300;
+        line-height: 1;
+        letter-spacing: -.05rem;
+      }
+      .card {
+        overflow: hidden;
+      }
+      .card img{
+        width: 100%;
+      }
+      
+      /* RESPONSIVE CSS
+      -------------------------------------------------- */
+      
+      @media (min-width: 40em) {
+        /* Bump up size of carousel content */
+        .carousel-caption p {
+          margin-bottom: 1.25rem;
+          font-size: 1.25rem;
+          line-height: 1.4;
+        }
+      
+        .featurette-heading {
+          font-size: 50px;
+        }
+      }
+      
+      @media (min-width: 62em) {
+        .featurette-heading {
+          margin-top: 7rem;
+        }
+      }
+
+
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+<!-- navbar section -->
+<div class="container-fluid bg-light my-0">
+
+<div class="container">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">PRS</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/about">about us</a>
+          </li>
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/contact">contact us</a>
+          </li>
+        </ul>
+        <form class="d-flex" method="GET">
+          <input class="form-control me-2" type="search" name="element" id="element" placeholder="Search...." aria-label="Search">
+          <button class="btn btn-outline-success mx-2" type="submit">Search</button>
+          <button class="btn btn-outline-success"><a href="/logout" class="text-decoration-none text-success ">LOGOUT</a></button> 
+        </form>
+      </div>
+    </div>
+  </nav>
+{% comment %} alert during comment submit {% endcomment %}
+
+
+{% if messages %}
+{% for message in messages %}
+  <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+  <strong>  {{ message }}</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  {% comment %} end of alert {% endcomment %}
+</div>
+      <!-- end of navbar section -->
+
+
+
+{% block body  %}{% endblock body  %}
+    
+</div>
+
+      <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+      <script>window.jQuery || document.write('<script src="/docs/4.2/assets/js/vendor/jquery-slim.min.js"><\/script>')</script><script src="/docs/4.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-zDnhMsjVZfS3hiP7oCBRmfjkQC4fzxVxFhBx8Hkz2aZX8gEvA/jsP3eXRCvzTofP" crossorigin="anonymous"></script>
+    <!-- Option 2: Separate Popper and Bootstrap JS -->
+    <!--
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+    -->
+
+
+    <script src="{% static 'js/simple.js' %}">
+
+    </script>
+  </body>
+</html>

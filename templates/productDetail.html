@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+
+
+{% block title %}
+    Product Detail
+{% endblock title %}
+    
+
+
+{% block body %}
+<div class="card mb-3 mt-3 mx-auto" style="max-width: 740px;">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <img src="{{product.image}}" class="img-fluid rounded-start" alt="{{product.title}}">
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title">{{product.title}}</h5>
+        <p class="card-text"><small class="text-muted">rating={{product.rating}}</small></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-5">
+  <h1 class="text-center text-warning chg" ><b>RECOMMENDATION FOR YOU</b>
+  </h1>
+</div>
+
+<div class="album py-5 bg-light">
+  <div class="container">
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+
+      
+       {%for i in data%}
+      <div class="col">
+        <div class="card shadow-sm">
+           <img src="{{i.image}}" alt="img" width="200px" height="200px">
+          <div class="card-body">
+            <p class="card-text">{{i.title}}</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <small class="text-muted">{{i.rating}}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+        {%endfor%}  
+        
+        
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock body %}
+    
+

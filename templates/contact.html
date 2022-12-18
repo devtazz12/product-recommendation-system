@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}
+contact
+{% endblock title %}
+
+{% block body %}
+
+<div class="container mt-4 mx-auto ">
+    <img src="https://source.unsplash.com/1296x500/?phone,contacts" class="d-block w-100"  alt="img">
+
+</div>
+
+
+
+ <div class="container my-5 ">
+
+    <h1 class="text-center ">Contact Us</h1>
+    {% comment %} contact form {% endcomment %}
+   <form method="post" action="/contact">
+    {% csrf_token %}
+
+      <div class="mb-3">
+        <div class="text-center">
+          <label for="exampleFormControlInput1" class="form-label my-0"><b>Full Name</b></label>
+        </div>
+        <input Required type="text" class="form-control w-50 mx-auto" id="name" name="name" placeholder="enter your full name">
+      </div>
+       <div class="mb-3">
+        <div class="text-center">
+          <label for="exampleFormControlInput1" class="form-label my-0"><b>Email Address</b></label>
+        </div>      
+          <input Required type="email" name="email" class="form-control w-50 mx-auto" id="exampleFormControlInput1" placeholder="enter your email address">
+       </div>
+      <div class="mb-3">
+        <div class="text-center">
+          <label for="desc" class="form-label my-0"><b>Questions</b></label>
+        </div>      
+        <textarea Required class="form-control width-300 w-50 mx-auto" name="desc" rows="3" placeholder="tell us what you want to contact us for"></textarea>
+      </div>
+      <div class="text-center">
+        <button class="btn bg-primary text-light w-50" type="Submit"><b>Submit</b></button>
+      </div>
+    </form>
+
+</div>
+
+
+{% endblock body %}

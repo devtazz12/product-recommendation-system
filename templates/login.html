@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+   <title>my login page</title>
+    <style>
+      *{
+        margin:0px;
+        padding:0px;
+      }
+        .hold {
+          height: 100%;
+        }
+        
+         .hold {
+          display: flex;
+          align-items: center;
+          padding-top:12%;
+        } 
+        .hol{
+          position: absolute;
+          top:0;
+        }
+        
+        .form-signin {
+          width: 100%;
+          max-width: 330px;
+          padding: 15px;
+          margin: auto;
+        }
+        
+        .form-signin .checkbox {
+          font-weight: 400;
+        }
+        
+        .form-signin .form-floating:focus-within {
+          z-index: 2;
+        }
+        
+        .form-signin input[type="email"] {
+          margin-bottom: -1px;
+          border-bottom-right-radius: 0;
+          border-bottom-left-radius: 0;
+        }
+        
+        .form-signin input[type="password"] {
+          margin-bottom: 10px;
+          border-top-left-radius: 0;
+          border-top-right-radius: 0;
+        }
+
+        .bd-placeholder-img {
+          font-size: 1.125rem;
+          text-anchor: middle;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          user-select: none;
+        }
+
+        .background {
+          background-image: url(https://images.unsplash.com/photo-1542887800-faca0261c9e1?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=900&ixid=MnwxfDB8MXxyYW5kb218MHx8ZGFya3x8fHx8fDE2NjYwMTA2MTA&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1900);
+          
+        }
+        .back {
+          background-image: url(https://images.unsplash.com/photo-1527701963793-33e969bca5ee?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=900&ixid=MnwxfDB8MXxyYW5kb218MHx8bmF0dXJlfHx8fHx8MTY2NjAxMDc5Mw&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1900);
+          position: relative;
+        }
+  
+        @media (min-width: 768px) {
+          .bd-placeholder-img-lg {
+            font-size: 3.5rem;
+          }
+        }
+      </style>
+  
+      
+      <!-- Custom styles for this template -->
+      <!-- {% comment %} <link href="signin.css" rel="stylesheet"> {% endcomment %} -->
+    </head>
+    <body class="back ">
+   <div class= "hol">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    <strong>  {{ message }}</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+   </div>
+
+   
+  <div class="hold">
+    <div class="form-signin text-center background">
+      <form method="post" action="/login" >
+          {% csrf_token %}
+        <h1 class="h3 mb-3 fw-normal text-light"><b>SIGNIN HERE</b></h1>
+        {%if error%}
+      <div class="alert alert-danger" role="alert">
+        {{error}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endif %}
+    
+        <div class="form-floating">
+          <input type="text" class="form-control" name="username" id="floatingInput" placeholder="username">
+          <label for="floatingInput">username</label>
+        </div>
+        <div class="form-floating mt-3">
+          <input type="password" class="form-control" name="password" id="floatingPassword" placeholder="Password">
+          <label for="floatingPassword">Password</label>
+        </div>
+    
+        <div class="checkbox mb-3">
+          <label class="text-light">
+            <input type="checkbox"  value="remember-me"> Remember me
+          </label>
+        </div>
+        <button class=" btn  btn-primary" type="submit">Sign in</button>
+        <!-- Button trigger modal -->
+         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+           SignUp
+         </button>
+        <p class="mt-5 mb-3 text-muted text-light">&copy; 2017–2021</p>
+      </form>
+    </div>
+  </div>
+
+
+
+<!--  signup Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">SIGNUP HERE</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body">
+      
+
+        {% comment %} form {% endcomment %}
+
+   <form action="/signup" method='post'>
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="username" class="form-label my-0 text-justify"><b>User Name</b></label>
+      <input Required type="text" class="form-control" id="username" name="username" placeholder="Enter your username">
+    </div>
+    <div class="mb-3">
+      <label for="fname" class="form-label my-0"><b>First Name</b></label>
+      <input Required type="text" class="form-control" id="fname" name="fname" placeholder="Enter your firstname">
+    </div>
+    <div class="mb-3">
+      <label for="lname" class="form-label my-0"><b>Last Name</b></label>
+      <input Required type="text" class="form-control" id="lname" name="lname" placeholder="Enter your lastname">
+    </div>
+    <div class="mb-3">
+      <label for="email" class="form-label my-0"><b>Email address</b></label>
+      <input Required type="email" class="form-control" id="email" name="email" placeholder="name@example.com">
+    </div>
+    <div class="mb-3">
+      <label for="pass1" class="form-label my-0"><b>Create Password</b></label>
+      <input Required type="password" class="form-control" id="pass1" name="pass1" placeholder="create strong password">
+    </div>
+    <div class="mb-3">
+      <label for="pass2" class="form-label my-0"><b>ConfirmPassword</b></label>
+      <input Required type="password" class="form-control" id="pass2" name="pass2" placeholder="Enter password again">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  
+   </form>
+
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+  </body>
+</html>
