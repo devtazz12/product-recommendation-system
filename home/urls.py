@@ -17,8 +17,8 @@ from django.contrib import admin
 from django.urls import path, include
 from home import views
 
-admin.site.site_header = "all discount in one platform"
-admin.site.index_title = "Welcome to all discount in one platform"
+admin.site.site_header = "PRS"
+admin.site.index_title = "Welcome to PRS"
 admin.site.site_title = " our website"
 urlpatterns = [
     path("", views.index, name="home"),
