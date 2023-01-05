@@ -12,4 +12,7 @@ you must have to install
 ```bash
   numpy
 ```
+```bash
+  pandas
+```
     
