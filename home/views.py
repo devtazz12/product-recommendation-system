@@ -46,7 +46,6 @@ if total_products == 0:
       rating = avg_rating[n]
     )
 
-  print("new products added")
     
 
   
@@ -272,8 +271,6 @@ def search(request):
 
 
 def index(request):
-  if request.user.is_anonymous:
-    return redirect("/login")
   if 'element' in request.GET:
     element = request.GET.get('element')
     html_content= get_html_content(element)
@@ -325,8 +322,6 @@ def index(request):
    # return HttpResponse("this is about page")
 
 def about(request):
-   if request.user.is_anonymous:
-        return redirect("/login")
    if 'element' in request.GET:
      element = request.GET.get('element')
      html_content= get_html_content(element)
@@ -375,8 +370,6 @@ def about(request):
    # return HttpResponse("this is about page")
 
 def contact(request):
-  if request.user.is_anonymous:
-        return redirect("/login")
   #this is process of sending information of user in the database.
   if 'element' in request.GET:
     element = request.GET.get('element')
