@@ -11,40 +11,52 @@ from .models import ScrappedProduct,Search
 import numpy as np
 
 import pickle
-popular_df= pickle.load(open('home/popularD.pkl','rb'))
-pt= pickle.load(open('home/pt.pkl','rb'))
-similarity_score= pickle.load(open('home/similarity_score.pkl','rb'))
-final_data= pickle.load(open('home/final_data.pkl','rb'))
+popular_df= pickle.load(open('home/result_daraz.pkl','rb'))
+pt= pickle.load(open('home/pt_daraz.pkl','rb'))
+similarity_score= pickle.load(open('home/similarity_score_daraz.pkl','rb'))
+final_data= pickle.load(open('home/final_data_daraz.pkl','rb'))
 
 
 avg_rating=[]
 title=[]
 img_url=[]
-for i in popular_df['title']:
+link=[]
+price=[]
+dprice=[]
+perdis=[]
+for i in popular_df['title--wFj93']:
   title.append(i)
-for i in popular_df['avg_rating']:
+
+for i in popular_df['rating']:
   avg_rating.append(i)
-for i in popular_df['img_url']:
+for i in popular_df['image--WOyuZ src']:
   img_url.append(i)
+for i in popular_df['mainPic--ehOdr href']:
+  link.append(i)
+for i in popular_df['currency--GVKjl 2']:
+  price.append(i)
+for i in popular_df['currency--GVKjl']:
+  dprice.append(i)
+for i in popular_df['discount--HADrg']:
+  perdis.append(i)
 
 
-total_products = ScrappedProduct.objects.all().count()
+# ScrappedProduct.objects.all().delete()
+
+products= ScrappedProduct.objects.all().count()
 
 
-if total_products == 0:
-  final_list=[]
-  for n in range(0,50):
-    dict={}
-    dict['title']=title[n]
-    dict['image']=img_url[n]
-    dict['rating']=avg_rating[n]
-    final_list.append(dict)
-
-    ScrappedProduct.objects.create(
-      title = title[n],
-      image = img_url[n],
-      rating = avg_rating[n]
-    )
+if products == 0:
+   for n in range(0,3412):
+        ScrappedProduct.objects.create(
+          title = title[n],
+          image = img_url[n],
+          rating = round(avg_rating[n],1),
+          link= link[n],
+          price= price[n],
+          dprice= dprice[n],
+          perdis= perdis[n]
+        )
 
     
 
@@ -188,18 +200,19 @@ def productDetail(request,productId):
 
 
   user_input=productFromDB.title
+  print(user_input)
   
   index=np.where(pt.index==user_input)[0][0]
   similar_items = sorted(list(enumerate(similarity_score[index])), key=lambda x:x[1],reverse=True)[1:5]
   data=[]
   for i in similar_items:
     item={}
-    temp_df=final_data[final_data['title']==pt.index[i[0]]]
-    title= temp_df.drop_duplicates('title')['title'].values
+    temp_df=final_data[final_data['title--wFj93']==pt.index[i[0]]]
+    title= temp_df.drop_duplicates('title--wFj93')['title--wFj93'].values
     item['title']=title[0]
        
-    img_url=temp_df.drop_duplicates('title')['img_url'].values
-    rating=temp_df.drop_duplicates('title')['ratings'].values
+    img_url=temp_df.drop_duplicates('title--wFj93')['image--WOyuZ src'].values
+    rating=temp_df.drop_duplicates('title--wFj93')['rating'].values
     item['image']=img_url[0]
     item['rating']=rating[0]
         
@@ -271,52 +284,8 @@ def search(request):
 
 
 def index(request):
-  if 'element' in request.GET:
-    element = request.GET.get('element')
-    html_content= get_html_content(element)
-    soup= BeautifulSoup(html_content.text, 'html.parser')
-    titles = soup.findAll('span', {'class':'a-size-small a-color-base a-text-normal'})
-    ratings = soup.findAll('span', {'class':'a-icon-alt'})
-    img_urls=soup.find_all('img',{'class':'s-image'})
-    title_list=[]
-    rating_list=[]
-    imgurl_list=[]
 
-
-    # appending into list 
-    for img_url in img_urls:
-        if 'jpg' in img_url['src']:
-            imgurl_list.append(img_url['src'])
-
-    for title in titles:
-        title_list.append(title.text)
-    for rating in ratings:
-        rating_list.append(rating.text.replace(' out of 5 stars',''))
-
-    Search.objects.all().delete()
-
-    scrap_amz = []
-    for m in range(0,13):
-        dict_scrap={}
-        dict_scrap['title']=title_list[m]
-        dict_scrap['image']=imgurl_list[m]
-        dict_scrap['rating']=rating_list[m]
-        scrap_amz.append(dict_scrap)
-
-        Search.objects.create(
-          title = title_list[m],
-          image = imgurl_list[m],
-          rating = rating_list[m]
-        )
-
-    
-    products =Search.objects.all()
-    
-
-
-    return render(request, 'search.html', {'scrap_amz':products})  
-
-  productsFromDB = ScrappedProduct.objects.all()
+  productsFromDB = ScrappedProduct.objects.all()[98:102]
 
   return render(request, 'index.html', {'popularlist':productsFromDB})
    # return HttpResponse("this is about page")
@@ -477,3 +446,7 @@ def handleSignup(request):
 
     else: 
         return HttpResponse('404 Error - Not Found') 
+
+def daraz(request):
+  productsFromDB = ScrappedProduct.objects.all()
+  return render(request, "daraz.html",{'popularlist':productsFromDB})

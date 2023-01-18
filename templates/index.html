@@ -53,6 +53,13 @@ home
 </div>
 
 {% comment %} examples from bootstrap (thumnail) {% endcomment %}
+
+<div class="container mt-5">
+  <h1 class="text-warning chg" >From daraz
+  </h1>
+  <button><a href="/daraz">see more</a></button>
+</div>
+
 <div class="album py-5 bg-light">
     <div class="container">
 
@@ -67,6 +74,14 @@ home
                   <p  class="card-text">{{i.title}}</p>
                 <div class="d-flex justify-content-between align-items-center">
                   <small class="text-muted">{{i.rating}} </small>
+                  
+                <a href="{{i.link}}">link</a>
+                </div>
+                <div>
+                 <small class="text-muted">{{i.dprice}} </small>
+                 <small class="text-muted"><del>{{i.price}}</del></small>
+                 <small class="text-muted">{{i.perdis}} </small>
+                 
                 </div>
                 <a href="{% url 'product_detail' i.id %}" >Detail</a>
               </div>

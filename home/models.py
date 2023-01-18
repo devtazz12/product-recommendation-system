@@ -16,6 +16,10 @@ class ScrappedProduct(models.Model):
     title = models.CharField(max_length=500)
     image = models.ImageField(upload_to='images')
     rating = models.FloatField()
+    link = models.ImageField( upload_to='image', default='link')
+    price = models.CharField(max_length=50, null=True)
+    dprice = models.CharField(max_length=50, null=True)
+    perdis = models.CharField(max_length=50, null=True)
 
 
     def __str__(self):

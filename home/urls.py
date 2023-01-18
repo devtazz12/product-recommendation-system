@@ -30,6 +30,7 @@ urlpatterns = [
     path('search', views.search, name="search"),
 
     path("product_detail/<int:productId>", views.productDetail,name="product_detail"),
-    path("search_product_detail/<int:productId>", views.searchProductDetail,name="search_product_detail")
+    path("search_product_detail/<int:productId>", views.searchProductDetail,name="search_product_detail"),
+    path("daraz",views.daraz, name="daraz")
 
 ]
