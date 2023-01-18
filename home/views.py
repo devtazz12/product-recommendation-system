@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 import random
 from .models import ScrappedProduct,Search
 import numpy as np
+from django.core.paginator import Paginator
 
 import pickle
 popular_df= pickle.load(open('home/result_daraz.pkl','rb'))
@@ -232,8 +233,6 @@ def get_html_content(element):
     return response
 
 def search(request):
-  if request.user.is_anonymous:
-    return redirect("/login")
   if 'element' in request.GET:
     element = request.GET.get('element')
     html_content= get_html_content(element)
@@ -447,6 +446,12 @@ def handleSignup(request):
     else: 
         return HttpResponse('404 Error - Not Found') 
 
+
 def daraz(request):
-  productsFromDB = ScrappedProduct.objects.all()
-  return render(request, "daraz.html",{'popularlist':productsFromDB})
+
+  productsFromDB = ScrappedProduct.objects.get_queryset().order_by('id')
+  paginator=Paginator(productsFromDB, 50)
+  page_number=request.GET.get('page')
+  product=paginator.get_page(page_number)
+  
+  return render(request, "daraz.html",{'popularlist':product ,'page_number':page_number})
