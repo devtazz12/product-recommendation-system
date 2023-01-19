@@ -7,7 +7,7 @@ from django.contrib.auth import logout, authenticate, login
 import requests
 from bs4 import BeautifulSoup
 import random
-from .models import ScrappedProduct,Search
+from .models import ScrappedProduct,Search,recommend_product
 import numpy as np
 from django.core.paginator import Paginator
 
@@ -49,15 +49,15 @@ products= ScrappedProduct.objects.all().count()
 
 if products == 0:
    for n in range(0,3412):
-        ScrappedProduct.objects.create(
-          title = title[n],
-          image = img_url[n],
-          rating = round(avg_rating[n],1),
-          link= link[n],
-          price= price[n],
-          dprice= dprice[n],
-          perdis= perdis[n]
-        )
+      ScrappedProduct.objects.create(
+        title = title[n],
+        image = img_url[n],
+        rating = avg_rating[n],
+        link= link[n],
+        price= price[n],
+        dprice= dprice[n],
+        perdis= perdis[n]
+      )
 
     
 
@@ -67,218 +67,109 @@ if products == 0:
 # Create your views here.
 
 
-def searchProductDetail(request,productId):
-  if 'element' in request.GET:
-    element = request.GET.get('element')
-    html_content= get_html_content(element)
-    soup= BeautifulSoup(html_content.text, 'html.parser')
-    titles = soup.findAll('span', {'class':'a-size-small a-color-base a-text-normal'})
-    ratings = soup.findAll('span', {'class':'a-icon-alt'})
-    img_urls=soup.find_all('img',{'class':'s-image'})
-    title_list=[]
-    rating_list=[]
-    imgurl_list=[]
-
-
-    # appending into list 
-    for img_url in img_urls:
-        if 'jpg' in img_url['src']:
-            imgurl_list.append(img_url['src'])
-
-    for title in titles:
-        title_list.append(title.text)
-    for rating in ratings:
-        rating_list.append(rating.text.replace(' out of 5 stars',''))
-
-    Search.objects.all().delete()
-
-    scrap_amz = []
-    for m in range(0,13):
-        dict_scrap={}
-        dict_scrap['title']=title_list[m]
-        dict_scrap['image']=imgurl_list[m]
-        dict_scrap['rating']=rating_list[m]
-        scrap_amz.append(dict_scrap)
-
-        Search.objects.create(
-          title = title_list[m],
-          image = imgurl_list[m],
-          rating = rating_list[m]
-        )
-
-    
-    products =Search.objects.all()
-    
-
-
-    return render(request, 'search.html', {'scrap_amz':products})
-
-  productFromDB = Search.objects.get(pk=productId)
-
-
-  product = {
-    'title':productFromDB.title,
-    'image':productFromDB.image,
-    'rating':productFromDB.rating
-  }
-
-  user_input=productFromDB.title
-  
-  index=np.where(pt.index==user_input)[0][0]
-  similar_items = sorted(list(enumerate(similarity_score[index])), key=lambda x:x[1],reverse=True)[1:5]
-  data=[]
-  for i in similar_items:
-    item={}
-    temp_df=final_data[final_data['title']==pt.index[i[0]]]
-    title= temp_df.drop_duplicates('title')['title'].values
-    item['title']=title[0]
-       
-    img_url=temp_df.drop_duplicates('title')['img_url'].values
-    rating=temp_df.drop_duplicates('title')['ratings'].values
-    item['image']=img_url[0]
-    item['rating']=rating[0]
-        
-    data.append(item)
-
-  return render(request,"productDetail.html",{'product':product, 'data':data})
-
-
-
 def productDetail(request,productId):
-  if 'element' in request.GET:
-    element = request.GET.get('element')
-    html_content= get_html_content(element)
-    soup= BeautifulSoup(html_content.text, 'html.parser')
-    titles = soup.findAll('span', {'class':'a-size-small a-color-base a-text-normal'})
-    ratings = soup.findAll('span', {'class':'a-icon-alt'})
-    img_urls=soup.find_all('img',{'class':'s-image'})
-    title_list=[]
-    rating_list=[]
-    imgurl_list=[]
-
-
-    # appending into list 
-    for img_url in img_urls:
-        if 'jpg' in img_url['src']:
-            imgurl_list.append(img_url['src'])
-
-    for title in titles:
-        title_list.append(title.text)
-    for rating in ratings:
-        rating_list.append(rating.text.replace(' out of 5 stars',''))
-
-    Search.objects.all().delete()
-
-    scrap_amz = []
-    for m in range(0,13):
-        dict_scrap={}
-        dict_scrap['title']=title_list[m]
-        dict_scrap['image']=imgurl_list[m]
-        dict_scrap['rating']=rating_list[m]
-        scrap_amz.append(dict_scrap)
-
-        Search.objects.create(
-          title = title_list[m],
-          image = imgurl_list[m],
-          rating = rating_list[m]
-        )
-
-    
-    products =Search.objects.all()
-    
-
-
-    return render(request, 'search.html', {'scrap_amz':products})
-
-
   productFromDB = ScrappedProduct.objects.get(pk=productId)
-
   product = {
     'title':productFromDB.title,
     'image':productFromDB.image,
-    'rating':productFromDB.rating
+    'rating':productFromDB.rating,
+    'link': productFromDB.link,
+    'price': productFromDB.price,
+    'dprice':productFromDB.dprice,
+    'perdis':productFromDB.perdis
   }
 
 
   user_input=productFromDB.title
-  print(user_input)
   
   index=np.where(pt.index==user_input)[0][0]
   similar_items = sorted(list(enumerate(similarity_score[index])), key=lambda x:x[1],reverse=True)[1:5]
-  data=[]
+  recommend_product.objects.all().delete()
   for i in similar_items:
     item={}
     temp_df=final_data[final_data['title--wFj93']==pt.index[i[0]]]
     title= temp_df.drop_duplicates('title--wFj93')['title--wFj93'].values
     item['title']=title[0]
-       
+    link=temp_df.drop_duplicates('title--wFj93')['mainPic--ehOdr href'].values
     img_url=temp_df.drop_duplicates('title--wFj93')['image--WOyuZ src'].values
     rating=temp_df.drop_duplicates('title--wFj93')['rating'].values
+    price=temp_df.drop_duplicates('title--wFj93')['currency--GVKjl 2'].values
+    dprice=temp_df.drop_duplicates('title--wFj93')['currency--GVKjl'].values
+    perdis=temp_df.drop_duplicates('title--wFj93')['discount--HADrg'].values
     item['image']=img_url[0]
     item['rating']=rating[0]
+    item['link']=link[0]
+    item['price']=price[0]
+    item['dprice']=dprice[0]
+    item['perdis']=perdis[0]
+    
+    recommend_product.objects.create(
+        title = title[0],
+        image = img_url[0],
+        rating = rating[0],
+        link= link[0],
+        price= price[0],
+        dprice= dprice[0],
+        perdis= perdis[0]
+      )
         
-    data.append(item)
+   
+  recommendproductfromDB = recommend_product.objects.all()
+
+  return render(request,"productDetail.html",{'product':product, 'data':recommendproductfromDB})
 
 
-  return render(request,"productDetail.html",{'product':product, 'data':data})
+def recommendDetail(request,productId):
+  productFromDB = recommend_product.objects.get(pk=productId)
+  product = {
+    'title':productFromDB.title,
+    'image':productFromDB.image,
+    'rating':productFromDB.rating,
+    'link': productFromDB.link,
+    'price': productFromDB.price,
+    'dprice':productFromDB.dprice,
+    'perdis':productFromDB.perdis
+  }
 
 
-
-def get_html_content(element): 
-    headers = {
-        'User-Agent':'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Mobile Safari/537.36',
-        'Accept-Language': 'en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7'
-    }
-    response = requests.get(f'https://www.amazon.com/s?k={element}', headers=headers)
-    return response
-
-def search(request):
-  if 'element' in request.GET:
-    element = request.GET.get('element')
-    html_content= get_html_content(element)
-    soup= BeautifulSoup(html_content.text, 'html.parser')
-    titles = soup.findAll('span', {'class':'a-size-small a-color-base a-text-normal'})
-    ratings = soup.findAll('span', {'class':'a-icon-alt'})
-    img_urls=soup.find_all('img',{'class':'s-image'})
-    title_list=[]
-    rating_list=[]
-    imgurl_list=[]
-
-
-    # appending into list 
-    for img_url in img_urls:
-        if 'jpg' in img_url['src']:
-            imgurl_list.append(img_url['src'])
-
-    for title in titles:
-        title_list.append(title.text)
-    for rating in ratings:
-        rating_list.append(rating.text.replace(' out of 5 stars',''))
-
-    Search.objects.all().delete()
-
-    scrap_amz = []
-    for m in range(0,13):
-        dict_scrap={}
-        dict_scrap['title']=title_list[m]
-        dict_scrap['image']=imgurl_list[m]
-        dict_scrap['rating']=rating_list[m]
-        scrap_amz.append(dict_scrap)
-
-        Search.objects.create(
-          title = title_list[m],
-          image = imgurl_list[m],
-          rating = rating_list[m]
-        )
-
-    
-    products =Search.objects.all()
-    
-
-
-    return render(request, 'search.html', {'scrap_amz':products})
+  user_input=productFromDB.title
   
-  return render(request, 'search.html')    
+  index=np.where(pt.index==user_input)[0][0]
+  similar_items = sorted(list(enumerate(similarity_score[index])), key=lambda x:x[1],reverse=True)[1:5]
+  recommend_product.objects.all().delete()
+  for i in similar_items:
+    item={}
+    temp_df=final_data[final_data['title--wFj93']==pt.index[i[0]]]
+    title= temp_df.drop_duplicates('title--wFj93')['title--wFj93'].values
+    item['title']=title[0]
+    link=temp_df.drop_duplicates('title--wFj93')['mainPic--ehOdr href'].values
+    img_url=temp_df.drop_duplicates('title--wFj93')['image--WOyuZ src'].values
+    rating=temp_df.drop_duplicates('title--wFj93')['rating'].values
+    price=temp_df.drop_duplicates('title--wFj93')['currency--GVKjl 2'].values
+    dprice=temp_df.drop_duplicates('title--wFj93')['currency--GVKjl'].values
+    perdis=temp_df.drop_duplicates('title--wFj93')['discount--HADrg'].values
+    item['image']=img_url[0]
+    item['rating']=rating[0]
+    item['link']=link[0]
+    item['price']=price[0]
+    item['dprice']=dprice[0]
+    item['perdis']=perdis[0]
+    
+    recommend_product.objects.create(
+        title = title[0],
+        image = img_url[0],
+        rating = rating[0],
+        link= link[0],
+        price= price[0],
+        dprice= dprice[0],
+        perdis= perdis[0]
+      )
+        
+   
+  recommendproductfromDB = recommend_product.objects.all()
+
+  return render(request,"productDetail.html",{'product':product, 'data':recommendproductfromDB})
+
 
 
 
@@ -290,99 +181,12 @@ def index(request):
    # return HttpResponse("this is about page")
 
 def about(request):
-   if 'element' in request.GET:
-     element = request.GET.get('element')
-     html_content= get_html_content(element)
-     soup= BeautifulSoup(html_content.text, 'html.parser')
-     titles = soup.findAll('span', {'class':'a-size-small a-color-base a-text-normal'})
-     ratings = soup.findAll('span', {'class':'a-icon-alt'})
-     img_urls=soup.find_all('img',{'class':'s-image'})
-     title_list=[]
-     rating_list=[]
-     imgurl_list=[]
- 
- 
-     # appending into list 
-     for img_url in img_urls:
-         if 'jpg' in img_url['src']:
-             imgurl_list.append(img_url['src'])
- 
-     for title in titles:
-         title_list.append(title.text)
-     for rating in ratings:
-         rating_list.append(rating.text.replace(' out of 5 stars',''))
- 
-     Search.objects.all().delete()
- 
-     scrap_amz = []
-     for m in range(0,13):
-         dict_scrap={}
-         dict_scrap['title']=title_list[m]
-         dict_scrap['image']=imgurl_list[m]
-         dict_scrap['rating']=rating_list[m]
-         scrap_amz.append(dict_scrap)
- 
-         Search.objects.create(
-           title = title_list[m],
-           image = imgurl_list[m],
-           rating = rating_list[m]
-         )
- 
-     
-     products =Search.objects.all()
-     
- 
- 
-     return render(request, 'search.html', {'scrap_amz':products})
+   
    return render(request, "about.html")
    # return HttpResponse("this is about page")
 
 def contact(request):
   #this is process of sending information of user in the database.
-  if 'element' in request.GET:
-    element = request.GET.get('element')
-    html_content= get_html_content(element)
-    soup= BeautifulSoup(html_content.text, 'html.parser')
-    titles = soup.findAll('span', {'class':'a-size-small a-color-base a-text-normal'})
-    ratings = soup.findAll('span', {'class':'a-icon-alt'})
-    img_urls=soup.find_all('img',{'class':'s-image'})
-    title_list=[]
-    rating_list=[]
-    imgurl_list=[]
-
-
-    # appending into list 
-    for img_url in img_urls:
-        if 'jpg' in img_url['src']:
-            imgurl_list.append(img_url['src'])
-
-    for title in titles:
-        title_list.append(title.text)
-    for rating in ratings:
-        rating_list.append(rating.text.replace(' out of 5 stars',''))
-
-    Search.objects.all().delete()
-
-    scrap_amz = []
-    for m in range(0,13):
-        dict_scrap={}
-        dict_scrap['title']=title_list[m]
-        dict_scrap['image']=imgurl_list[m]
-        dict_scrap['rating']=rating_list[m]
-        scrap_amz.append(dict_scrap)
-
-        Search.objects.create(
-          title = title_list[m],
-          image = imgurl_list[m],
-          rating = rating_list[m]
-        )
-
-    
-    products =Search.objects.all()
-    
-
-
-    return render(request, 'search.html', {'scrap_amz':products})
 
   if request.method == "POST":
      name = request.POST.get('name')
