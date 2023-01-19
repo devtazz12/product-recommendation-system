@@ -1,18 +1,22 @@
 {% extends 'base.html' %}
 
+{% block link %}
+<link rel="stylesheet" href="/static/js/simple.js">
+{% endblock link %}
 {% block title %}
-daraz
+sastodeal
 {% endblock title %}
 
 {% block body %}
 
 <form action="" method='GET'>
+
     <div class="album py-5 bg-light">
         <div class="container">
     
           <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3">
     
-            {%for i in popularlist%}
+            {%for i in sastodealproduct%}
             
               <div class="col">
                 <div class="card shadow-sm">
@@ -26,11 +30,11 @@ daraz
                     </div>
                     <div>
                      <small class="text-muted">{{i.dprice}} </small>
-                     <small class="text-muted"><del>{{i.price}}</del> </small>
-                     <small class="text-muted">{{i.perdis}} </small>
+                     {% comment %} <small class="text-muted"><del>{{i.price}}</del> </small> {% endcomment %}
+                     {% comment %} <small class="text-muted">{{i.perdis}} </small> {% endcomment %}
                      
                     </div>
-                    <a href="{% url 'product_detail' i.id %}" >Detail</a>
+                    <a href="{% url 'product_detail_sastodeal' i.id %}" >Detail</a>
                   </div>
                 </div>
               </div>
@@ -44,9 +48,9 @@ daraz
         
       <nav aria-label="..." class="d-flex justify-content-center">
         <ul class="pagination">
-           {%if popularlist.has_previous%}
+           {%if sastodealproduct.has_previous%}
           <li class="page-item ">
-            <a class="page-link" href="?page={{popularlist.previous_page_number}}" >Previous</a>
+            <a class="page-link" href="?page={{sastodealproduct.previous_page_number}}" >Previous</a>
           </li>
           {%endif%}
           <li class="page-item"><a class="page-link" href="?page=1">1</a></li>
@@ -54,23 +58,19 @@ daraz
           <li class="page-item"><a class="page-link" href="?page=3">3</a></li>
           <div>-----------------------</div>
           <li class="page-item active" aria-current="page">
-          <a class="page-link" href="?page={{popularlist.current_page_number}}">{{page_number}}</a>
+          <a class="page-link" href="?page={{sastodealproduct.current_page_number}}">{{page_number}}</a>
           </li>
           <div>-----------------------</div>
-          <li class="page-item"><a class="page-link" href="?page=45">45</a></li>
-          <li class="page-item"><a class="page-link" href="?page=46">46</a></li>
-          <li class="page-item"><a class="page-link" href="?page=47">47</a></li>
-          <div>-----------------------</div>
-          <li class="page-item"><a class="page-link" href="?page=67">67</a></li>
-          <li class="page-item"><a class="page-link" href="?page=68">68</a></li>
-          <li class="page-item"><a class="page-link" href="?page=69">69</a></li>
+          <li class="page-item"><a class="page-link" href="?page=9">9</a></li>
+          <li class="page-item"><a class="page-link" href="?page=10">10</a></li>
+          <li class="page-item"><a class="page-link" href="?page=11">11</a></li>
           
-          {%if popularlist.has_next%}
+          {%if sastodealproduct.has_next%}
           <li class="page-item">
-            <a class="page-link" href="?page={{popularlist.next_page_number}}">Next</a>
+            <a class="page-link" href="?page={{sastodealproduct.next_page_number}}">Next</a>
           </li>
           {%endif%}
-        </ul>
+        </ul> 
       </nav>
 </form>
 

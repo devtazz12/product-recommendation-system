@@ -28,9 +28,17 @@ urlpatterns = [
     path('logout', views.logoutUser, name="logout"),
     path('signup', views.handleSignup, name="handelSignup"),
     
-
+#    for daraz
     path("product_detail/<int:productId>", views.productDetail,name="product_detail"),
     path("recommend_product_detail/<int:productId>", views.recommendDetail,name="recommend_product_detail"),
-    path("daraz",views.daraz, name="daraz")
+
+    # for sastodeal
+    path("product_detail_sastodeal/<int:productId>", views.product_detail_sastodeal,name="product_detail_sastodeal"),
+    path("recommend_detail_sastodeal/<int:productId>", views.recommend_detail_sastodeal,name="recommend_detail_sastodeal"),
+
+
+
+    path("daraz",views.daraz, name="daraz"),
+    path("sastodeal",views.sastodeal, name="sastodeal")
 
 ]

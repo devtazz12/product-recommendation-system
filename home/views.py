@@ -7,64 +7,77 @@ from django.contrib.auth import logout, authenticate, login
 import requests
 from bs4 import BeautifulSoup
 import random
-from .models import ScrappedProduct,Search,recommend_product
+from .models import ScrappedProduct,Search,recommend_product,sastodeal_product,recommend_product_sastodeal
 import numpy as np
 from django.core.paginator import Paginator
 
 import pickle
-popular_df= pickle.load(open('home/result_daraz.pkl','rb'))
+# from daraz
+# popular_df= pickle.load(open('home/result_daraz.pkl','rb'))
 pt= pickle.load(open('home/pt_daraz.pkl','rb'))
 similarity_score= pickle.load(open('home/similarity_score_daraz.pkl','rb'))
 final_data= pickle.load(open('home/final_data_daraz.pkl','rb'))
 
 
-avg_rating=[]
-title=[]
-img_url=[]
-link=[]
-price=[]
-dprice=[]
-perdis=[]
-for i in popular_df['title--wFj93']:
-  title.append(i)
+# from sastodeal
+# popular_df= pickle.load(open('home/result_sastodeal.pkl','rb'))
+pt_sastodeal= pickle.load(open('home/pt_sastodeal.pkl','rb'))
+similarity_score_sastodeal= pickle.load(open('home/similarity_score_sastodeal.pkl','rb'))
+final_data_sastodeal= pickle.load(open('home/final_data_sastodeal.pkl','rb'))
 
-for i in popular_df['rating']:
-  avg_rating.append(i)
-for i in popular_df['image--WOyuZ src']:
-  img_url.append(i)
-for i in popular_df['mainPic--ehOdr href']:
-  link.append(i)
-for i in popular_df['currency--GVKjl 2']:
-  price.append(i)
-for i in popular_df['currency--GVKjl']:
-  dprice.append(i)
-for i in popular_df['discount--HADrg']:
-  perdis.append(i)
+# to insert data into database
+
+# avg_rating=[]
+# title=[]
+# img_url=[]
+# link=[]
+# price=[]
+# dprice=[]
+# perdis=[]
 
 
-# ScrappedProduct.objects.all().delete()
+# for i in popular_df['product-item-link']:
+  
+#   title.append(i)
 
-products= ScrappedProduct.objects.all().count()
+# for i in popular_df['rating']:
+#   avg_rating.append(i)
+# for i in popular_df['product-image-wrapper src']:
+#   img_url.append(i)
+# for i in popular_df['product href']:
+#   link.append(i)
+# # for i in popular_df['currency--GVKjl 2']:
+# #   price.append(i)
+# for i in popular_df['price']: 
+#   dprice.append(i)
+# # for i in popular_df['discount--HADrg']:
+# #   perdis.append(i)
 
 
-if products == 0:
-   for n in range(0,3412):
-      ScrappedProduct.objects.create(
-        title = title[n],
-        image = img_url[n],
-        rating = avg_rating[n],
-        link= link[n],
-        price= price[n],
-        dprice= dprice[n],
-        perdis= perdis[n]
-      )
+# # sastodeal_product.objects.all().delete()
+
+# products= sastodeal_product.objects.all().count()
+
+
+# if products == 0:
+#    for n in range(0,543):
+#       sastodeal_product.objects.create(
+#         title = title[n],
+#         image = img_url[n],
+#         rating = avg_rating[n],
+#         link= link[n],
+#         dprice= dprice[n]
+        
+#       )
 
     
-
+# end of insertion of data
   
 
 
 # Create your views here.
+
+#for daraz recommendation system
 
 
 def productDetail(request,productId):
@@ -170,14 +183,106 @@ def recommendDetail(request,productId):
 
   return render(request,"productDetail.html",{'product':product, 'data':recommendproductfromDB})
 
+# end of daraz recommendation system
+#start of sastodeal recommendation system
+def product_detail_sastodeal(request, productId):
+  productFromDB = sastodeal_product.objects.get(pk=productId)
+  product = {
+    'title':productFromDB.title,
+    'image':productFromDB.image,
+    'rating':productFromDB.rating,
+    'link': productFromDB.link,
+    'dprice':productFromDB.dprice,
+  }
+
+
+  user_input=productFromDB.title
+  
+  index=np.where(pt_sastodeal.index==user_input)[0][0]
+  similar_items = sorted(list(enumerate(similarity_score_sastodeal[index])), key=lambda x:x[1],reverse=True)[1:5]
+  recommend_product_sastodeal.objects.all().delete()
+  for i in similar_items:
+    item={}
+    temp_df=final_data_sastodeal[final_data_sastodeal['product-item-link']==pt_sastodeal.index[i[0]]]
+    title= temp_df.drop_duplicates('product-item-link')['product-item-link'].values
+    item['title']=title[0]
+    link=temp_df.drop_duplicates('product-item-link')['product href'].values
+    img_url=temp_df.drop_duplicates('product-item-link')['product-image-wrapper src'].values
+    rating=temp_df.drop_duplicates('product-item-link')['rating'].values
+    dprice=temp_df.drop_duplicates('product-item-link')['price'].values
+    item['image']=img_url[0]
+    item['rating']=rating[0]
+    item['link']=link[0]
+    item['dprice']=dprice[0]
+    
+    recommend_product_sastodeal.objects.create(
+        title = title[0],
+        image = img_url[0],
+        rating = rating[0],
+        link= link[0],
+        dprice= dprice[0],
+      )
+        
+   
+  recommendproductfromDB = recommend_product_sastodeal.objects.all()
+
+  return render(request,"productDetailsastodeal.html",{'product':product, 'data':recommendproductfromDB})
+
+
+def recommend_detail_sastodeal(request, productId):
+  productFromDB = recommend_product_sastodeal.objects.get(pk=productId)
+  product = {
+    'title':productFromDB.title,
+    'image':productFromDB.image,
+    'rating':productFromDB.rating,
+    'link': productFromDB.link,
+    'dprice':productFromDB.dprice,
+  }
+
+
+  user_input=productFromDB.title
+  
+  index=np.where(pt_sastodeal.index==user_input)[0][0]
+  similar_items = sorted(list(enumerate(similarity_score_sastodeal[index])), key=lambda x:x[1],reverse=True)[1:5]
+  recommend_product_sastodeal.objects.all().delete()
+  for i in similar_items:
+    item={}
+    temp_df=final_data_sastodeal[final_data_sastodeal['product-item-link']==pt_sastodeal.index[i[0]]]
+    title= temp_df.drop_duplicates('product-item-link')['product-item-link'].values
+    item['title']=title[0]
+    link=temp_df.drop_duplicates('product-item-link')['product href'].values
+    img_url=temp_df.drop_duplicates('product-item-link')['product-image-wrapper src'].values
+    rating=temp_df.drop_duplicates('product-item-link')['rating'].values
+    dprice=temp_df.drop_duplicates('product-item-link')['price'].values
+    item['image']=img_url[0]
+    item['rating']=rating[0]
+    item['link']=link[0]
+    item['dprice']=dprice[0]
+    
+    recommend_product_sastodeal.objects.create(
+        title = title[0],
+        image = img_url[0],
+        rating = rating[0],
+        link= link[0],
+        dprice= dprice[0],
+      )
+        
+   
+  recommendproductfromDB = recommend_product_sastodeal.objects.all()
+
+  return render(request,"productDetailsastodeal.html",{'product':product, 'data':recommendproductfromDB})
+
+
+  # end of sastodeal system
 
 
 
 def index(request):
 
   productsFromDB = ScrappedProduct.objects.all()[98:102]
+  sastodealproduct = sastodeal_product.objects.all()[0:4]
 
-  return render(request, 'index.html', {'popularlist':productsFromDB})
+  return render(request, 'index.html', {'popularlist':productsFromDB, 'sastodealproduct':sastodealproduct})
    # return HttpResponse("this is about page")
 
 def about(request):
@@ -256,6 +361,21 @@ def daraz(request):
   productsFromDB = ScrappedProduct.objects.get_queryset().order_by('id')
   paginator=Paginator(productsFromDB, 50)
   page_number=request.GET.get('page')
+  if page_number==None:
+    page_number=1
   product=paginator.get_page(page_number)
   
   return render(request, "daraz.html",{'popularlist':product ,'page_number':page_number})
+
+
+
+def sastodeal(request):
+
+  sastodealproduct = sastodeal_product.objects.get_queryset().order_by('id')
+  paginator=Paginator(sastodealproduct, 50)
+  page_number=request.GET.get('page')
+  if page_number==None:
+    page_number=1
+  product=paginator.get_page(page_number)
+  
+  return render(request, "sastodeal.html",{ 'page_number':page_number, 'sastodealproduct':product})

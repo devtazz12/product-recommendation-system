@@ -37,6 +37,31 @@ class recommend_product(models.Model):
 
     def __str__(self):
         return self.title
+#sastodeal
+
+class sastodeal_product(models.Model):
+    title = models.CharField(max_length=500)
+    image = models.CharField(max_length=500, null=True)
+    rating = models.FloatField()
+    link = models.ImageField( upload_to='image', default='link')
+    dprice = models.CharField(max_length=50, null=True)
+    
+
+
+    def __str__(self):
+        return self.title
+
+class recommend_product_sastodeal(models.Model):
+    title = models.CharField(max_length=500)
+    image = models.CharField(max_length=500, null=True)
+    rating = models.FloatField()
+    link = models.ImageField( upload_to='image', default='link')
+    dprice = models.CharField(max_length=50, null=True)
+    
+
+
+    def __str__(self):
+        return self.title
     
 
 class Search(models.Model):
