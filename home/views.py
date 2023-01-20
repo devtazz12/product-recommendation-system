@@ -7,7 +7,7 @@ from django.contrib.auth import logout, authenticate, login
 import requests
 from bs4 import BeautifulSoup
 import random
-from .models import ScrappedProduct,Search,recommend_product,sastodeal_product,recommend_product_sastodeal
+from .models import ScrappedProduct,Search,recommend_product,sastodeal_product,recommend_product_sastodeal,socheko_product,recommend_product_socheko
 import numpy as np
 from django.core.paginator import Paginator
 
@@ -25,50 +25,51 @@ pt_sastodeal= pickle.load(open('home/pt_sastodeal.pkl','rb'))
 similarity_score_sastodeal= pickle.load(open('home/similarity_score_sastodeal.pkl','rb'))
 final_data_sastodeal= pickle.load(open('home/final_data_sastodeal.pkl','rb'))
 
+# from socheko
+popular_df= pickle.load(open('home/result_socheko.pkl','rb'))
+pt_socheko= pickle.load(open('home/pt_socheko.pkl','rb'))
+similarity_score_socheko= pickle.load(open('home/similarity_score_socheko.pkl','rb'))
+final_data_socheko= pickle.load(open('home/final_data_socheko.pkl','rb'))
+
 # to insert data into database
 
-# avg_rating=[]
-# title=[]
-# img_url=[]
-# link=[]
-# price=[]
-# dprice=[]
-# perdis=[]
+avg_rating=[]
+title=[]
+img_url=[]
+link=[]
+price=[]
+dprice=[]
+perdis=[]
+for i in popular_df['title']:
+  title.append(i)
+for i in popular_df['rating']:
+  avg_rating.append(i)
+for i in popular_df['image']:
+  img_url.append(i)
+for i in popular_df['link']:
+  link.append(i)
+# for i in popular_df['currency--GVKjl 2']:
+#   price.append(i)
+
+for i in popular_df['dprice']: 
+  dprice.append(i)
+
+# for i in popular_df['discount--HADrg']:
+#   perdis.append(i)
 
 
-# for i in popular_df['product-item-link']:
-  
-#   title.append(i)
+# socheko_product.objects.all().delete()
 
-# for i in popular_df['rating']:
-#   avg_rating.append(i)
-# for i in popular_df['product-image-wrapper src']:
-#   img_url.append(i)
-# for i in popular_df['product href']:
-#   link.append(i)
-# # for i in popular_df['currency--GVKjl 2']:
-# #   price.append(i)
-# for i in popular_df['price']: 
-#   dprice.append(i)
-# # for i in popular_df['discount--HADrg']:
-# #   perdis.append(i)
-
-
-# # sastodeal_product.objects.all().delete()
-
-# products= sastodeal_product.objects.all().count()
-
-
-# if products == 0:
-#    for n in range(0,543):
-#       sastodeal_product.objects.create(
-#         title = title[n],
-#         image = img_url[n],
-#         rating = avg_rating[n],
-#         link= link[n],
-#         dprice= dprice[n]
-        
-#       )
+products= socheko_product.objects.all().count()
+if products == 0:
+   for n in range(0,814):
+      socheko_product.objects.create(
+        title = title[n],
+        image = img_url[n],
+        rating = avg_rating[n],
+        link= link[n],
+        dprice= dprice[n]      
+      )
 
     
 # end of insertion of data
@@ -275,14 +276,110 @@ def recommend_detail_sastodeal(request, productId):
 
   # end of sastodeal system
 
+  #start of socheko system
+def product_detail_socheko(request, productId):
+  productFromDB = socheko_product.objects.get(pk=productId)
+  product = {
+    'title':productFromDB.title,
+    'image':productFromDB.image,
+    'rating':productFromDB.rating,
+    'link': productFromDB.link,
+    'dprice':productFromDB.dprice,
+  }
+
+
+  user_input=productFromDB.title
+  
+  index=np.where(pt_socheko.index==user_input)[0][0]
+  similar_items = sorted(list(enumerate(similarity_score_socheko[index])), key=lambda x:x[1],reverse=True)[1:5]
+  recommend_product_socheko.objects.all().delete()
+  for i in similar_items:
+    item={}
+    temp_df=final_data_socheko[final_data_socheko['title']==pt_socheko.index[i[0]]]
+    title= temp_df.drop_duplicates('title')['title'].values
+    item['title']=title[0]
+    link=temp_df.drop_duplicates('title')['link'].values
+    img_url=temp_df.drop_duplicates('title')['image'].values
+    rating=temp_df.drop_duplicates('title')['rating'].values
+    dprice=temp_df.drop_duplicates('title')['dprice'].values
+    item['image']=img_url[0]
+    item['rating']=rating[0]
+    item['link']=link[0]
+    item['dprice']=dprice[0]
+    
+    recommend_product_socheko.objects.create(
+        title = title[0],
+        image = img_url[0],
+        rating = rating[0],
+        link= link[0],
+        dprice= dprice[0],
+      )
+        
+   
+  recommendproductfromDB = recommend_product_socheko.objects.all()
+  return render(request, 'productDetailsocheko.html',{'product':product, 'data':recommendproductfromDB})
+
+def recommend_detail_socheko(request, productId):
+  productFromDB = recommend_product_socheko.objects.get(pk=productId)
+  product = {
+    'title':productFromDB.title,
+    'image':productFromDB.image,
+    'rating':productFromDB.rating,
+    'link': productFromDB.link,
+    'dprice':productFromDB.dprice,
+  }
+
+
+  user_input=productFromDB.title
+  
+  index=np.where(pt_socheko.index==user_input)[0][0]
+  similar_items = sorted(list(enumerate(similarity_score_socheko[index])), key=lambda x:x[1],reverse=True)[1:5]
+  recommend_product_socheko.objects.all().delete()
+  for i in similar_items:
+    item={}
+    temp_df=final_data_socheko[final_data_socheko['title']==pt_socheko.index[i[0]]]
+    title= temp_df.drop_duplicates('title')['title'].values
+    item['title']=title[0]
+    link=temp_df.drop_duplicates('title')['link'].values
+    img_url=temp_df.drop_duplicates('title')['image'].values
+    rating=temp_df.drop_duplicates('title')['rating'].values
+    dprice=temp_df.drop_duplicates('title')['dprice'].values
+    item['image']=img_url[0]
+    item['rating']=rating[0]
+    item['link']=link[0]
+    item['dprice']=dprice[0]
+    
+    recommend_product_socheko.objects.create(
+        title = title[0],
+        image = img_url[0],
+        rating = rating[0],
+        link= link[0],
+        dprice= dprice[0],
+      )
+        
+   
+  recommendproductfromDB = recommend_product_socheko.objects.all()
+  return render(request, 'productDetailsocheko.html',{'product':product, 'data':recommendproductfromDB})
+
+
+
+  #end of socheko system
+
+
 
 
 def index(request):
 
   productsFromDB = ScrappedProduct.objects.all()[98:102]
   sastodealproduct = sastodeal_product.objects.all()[0:4]
+  sochekoproduct = socheko_product.objects.all()[0:4]
+  dict={
+    'popularlist':productsFromDB,
+    'sastodealproduct':sastodealproduct,
+    'sochekoproduct':sochekoproduct
+  }
 
-  return render(request, 'index.html', {'popularlist':productsFromDB, 'sastodealproduct':sastodealproduct})
+  return render(request, 'index.html', dict)
    # return HttpResponse("this is about page")
 
 def about(request):
@@ -379,3 +476,13 @@ def sastodeal(request):
   product=paginator.get_page(page_number)
   
   return render(request, "sastodeal.html",{ 'page_number':page_number, 'sastodealproduct':product})
+
+
+def socheko(request):
+  sochekoproduct = socheko_product.objects.get_queryset().order_by('id')
+  paginator=Paginator(sochekoproduct, 50)
+  page_number=request.GET.get('page')
+  if page_number==None:
+    page_number=1
+  product=paginator.get_page(page_number)
+  return render(request, "socheko.html",{ 'page_number':page_number, 'sochekoproduct':product})
