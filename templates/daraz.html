@@ -6,7 +6,20 @@ daraz
 
 {% block body %}
 
+
+
 <form action="" method='GET'>
+  <div class="dropdown container mt-5">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+      category
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+      <li><a class="dropdown-item" href="?page=1">men fashion</a></li>
+      <li><a class="dropdown-item" href="?page=30">men footwear</a></li>
+      <li><a class="dropdown-item" href="?page=43">women fashion</a></li>
+      <li><a class="dropdown-item" href="?page=60">women footwear</a></li>
+    </ul>
+  </div>
     <div class="album py-5 bg-light">
         <div class="container">
     
@@ -56,10 +69,6 @@ daraz
           <li class="page-item active" aria-current="page">
           <a class="page-link" href="?page={{popularlist.current_page_number}}">{{page_number}}</a>
           </li>
-          <div>-----------------------</div>
-          <li class="page-item"><a class="page-link" href="?page=45">45</a></li>
-          <li class="page-item"><a class="page-link" href="?page=46">46</a></li>
-          <li class="page-item"><a class="page-link" href="?page=47">47</a></li>
           <div>-----------------------</div>
           <li class="page-item"><a class="page-link" href="?page=67">67</a></li>
           <li class="page-item"><a class="page-link" href="?page=68">68</a></li>

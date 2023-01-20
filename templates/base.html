@@ -160,12 +160,17 @@
             <a class="nav-link" href="/contact">contact us</a>
           </li>
         </ul>
-        <form class="d-flex" method="GET">
-          <input class="form-control me-2" type="search" name="element" id="element" placeholder="Search...." aria-label="Search">
-          <button class="btn btn-outline-success mx-2" type="submit">Search</button>
-           
-        </form>
-        <button class="btn btn-outline-success"><a href="/login" class="text-decoration-none text-success ">LOGIN</a></button>
+        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">        
+          <div class="btn-group" role="group">
+            <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+              {{user_name}}
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+              <li><a class="dropdown-item" href="/login">login</a></li>
+              <li><a class="dropdown-item" href="/logout">logout</a></li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   </nav>

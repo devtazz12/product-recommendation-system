@@ -7,7 +7,7 @@ from django.contrib.auth import logout, authenticate, login
 import requests
 from bs4 import BeautifulSoup
 import random
-from .models import ScrappedProduct,Search,recommend_product,sastodeal_product,recommend_product_sastodeal,socheko_product,recommend_product_socheko
+from .models import ScrappedProduct,recommend_product,sastodeal_product,recommend_product_sastodeal,socheko_product,recommend_product_socheko
 import numpy as np
 from django.core.paginator import Paginator
 
@@ -367,25 +367,34 @@ def recommend_detail_socheko(request, productId):
 
 
 
-
+#home page start
 def index(request):
-
+  u_name=request.user.username
+  if u_name=='':
+    u_name="my account"
   productsFromDB = ScrappedProduct.objects.all()[98:102]
   sastodealproduct = sastodeal_product.objects.all()[0:4]
   sochekoproduct = socheko_product.objects.all()[0:4]
   dict={
     'popularlist':productsFromDB,
     'sastodealproduct':sastodealproduct,
-    'sochekoproduct':sochekoproduct
+    'sochekoproduct':sochekoproduct,
+    'user_name':u_name
   }
 
   return render(request, 'index.html', dict)
-   # return HttpResponse("this is about page")
 
+   # home page end
+
+
+#start of about page
 def about(request):
    
    return render(request, "about.html")
-   # return HttpResponse("this is about page")
+
+   # end of about page
+
+   #start of contact page
 
 def contact(request):
   #this is process of sending information of user in the database.
@@ -398,6 +407,11 @@ def contact(request):
      contact.save()
      messages.success(request, 'Your message has been sent!')
   return render(request, "contact.html")
+
+#end of contact page
+
+
+#start of login page
 
 
 def loginUser(request):
@@ -416,10 +430,18 @@ def loginUser(request):
           return render(request, 'login.html')
     return render(request, 'login.html')
 
+    #end of login page
+
+    #start of logout page
+
 def logoutUser(request):
     logout(request)
     return redirect("/login")
+  
+  #end of logout page
 
+
+#start of signup page
 
 def handleSignup(request):
     if request.method == 'POST':
@@ -453,6 +475,8 @@ def handleSignup(request):
         return HttpResponse('404 Error - Not Found') 
 
 
+#daraz
+
 def daraz(request):
 
   productsFromDB = ScrappedProduct.objects.get_queryset().order_by('id')
@@ -464,7 +488,7 @@ def daraz(request):
   
   return render(request, "daraz.html",{'popularlist':product ,'page_number':page_number})
 
-
+#sastodeal
 
 def sastodeal(request):
 
@@ -477,7 +501,7 @@ def sastodeal(request):
   
   return render(request, "sastodeal.html",{ 'page_number':page_number, 'sastodealproduct':product})
 
-
+#socheko
 def socheko(request):
   sochekoproduct = socheko_product.objects.get_queryset().order_by('id')
   paginator=Paginator(sochekoproduct, 50)

@@ -10,6 +10,17 @@ socheko
 {% block body %}
 
 <form action="" method='GET'>
+  <div class="dropdown container mt-5">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+      category
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+      <li><a class="dropdown-item" href="?page=1">men fashion</a></li>
+      <li><a class="dropdown-item" href="?page=5">men footwear</a></li>
+      <li><a class="dropdown-item" href="?page=8">women fashion</a></li>
+      <li><a class="dropdown-item" href="?page=15">women footwear</a></li>
+    </ul>
+  </div>
 
     <div class="album py-5 bg-light">
         <div class="container">

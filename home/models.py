@@ -93,11 +93,3 @@ class recommend_product_socheko(models.Model):
         
     
 
-class Search(models.Model):
-    title = models.CharField(max_length=500)
-    image = models.ImageField(upload_to='images')
-    rating = models.FloatField()
-
-
-    def __str__(self):
-        return self.title
