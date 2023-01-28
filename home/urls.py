@@ -45,6 +45,12 @@ urlpatterns = [
 
     path("daraz",views.daraz, name="daraz"),
     path("sastodeal",views.sastodeal, name="sastodeal"),
-    path("socheko",views.socheko, name="socheko")
+    path("socheko",views.socheko, name="socheko"),
+
+
+#    review and rating
+    path("submit_review_daraz/<int:product_id>", views.submit_review_daraz, name="submit_review_daraz"),
+    path("submit_review_sastodeal/<int:product_id>", views.submit_review_sastodeal, name="submit_review_sastodeal"),
+    path("submit_review_socheko/<int:product_id>", views.submit_review_socheko, name="submit_review_socheko")
 
 ]

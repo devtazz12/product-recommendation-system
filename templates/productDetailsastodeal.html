@@ -31,6 +31,38 @@ product_detail_sastodeal
   </div>
 </div>
 
+<div class="container mt-1 mx-auto" style="width:50%">
+  <h5 class=" text-success chg" ><b>Add Review</b>
+  </h5>
+</div>
+<div class="container mx-auto" style="width:50%">
+  <form action="{% url 'submit_review_sastodeal' product.id %}" method="POST">
+    {% csrf_token %}
+    
+    <div class="mb-3">
+      <label for="textarea">Review:</label> <br>
+      <textarea class="form-control" name="review" rows="3"></textarea><br>
+    </div>
+    <div class="mb-3">
+      <label for="rating">Rating:</label><br>
+      <div class="rate">
+       <input type="radio" name="rating" id="rating10" value="5" requiered><label for="rating10" title="5"></label>
+       <input type="radio" name="rating" id="rating9" value="4.5" requiered><label for="rating9" title="4.5" class="half"></label>
+       <input type="radio" name="rating" id="rating8" value="4" requiered><label for="rating8" title="4"></label>
+       <input type="radio" name="rating" id="rating7" value="3.5" requiered><label for="rating7" title="3.5" class="half"></label>
+       <input type="radio" name="rating" id="rating6" value="3" requiered><label for="rating6" title="3"></label>
+       <input type="radio" name="rating" id="rating5" value="2.5" requiered><label for="rating5" title="2.5" class="half"></label>
+       <input type="radio" name="rating" id="rating4" value="2" requiered><label for="rating4" title="2"></label>
+       <input type="radio" name="rating" id="rating3" value="1.5" requiered><label for="rating3" title="1.5" class="half"></label>
+       <input type="radio" name="rating" id="rating2" value="1" requiered><label for="rating2" title="1"></label>
+       <input type="radio" name="rating" id="rating1" value="0.5" requiered><label for="rating1" title="0.5" class="half"></label>
+       
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+
 <div class="container mt-5">
   <h1 class="text-center text-warning chg" ><b>RECOMMENDATION FOR YOU</b>
   </h1>

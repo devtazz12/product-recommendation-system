@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Contact(models.Model):
@@ -90,6 +91,31 @@ class recommend_product_socheko(models.Model):
     def __str__(self):
         return self.title
 
-        
-    
+
+class ReviewRatingDaraz(models.Model):
+    product=models.ForeignKey(ScrappedProduct, on_delete=models.CASCADE)        
+    user=models.ForeignKey(User, on_delete=models.CASCADE)
+    review=models.CharField(max_length=100, null=True)
+    rating=models.FloatField()    
+
+    def __str__(self):
+        return self.review
+
+class ReviewRatingSastodeal(models.Model):
+    product=models.ForeignKey(sastodeal_product, on_delete=models.CASCADE)        
+    user=models.ForeignKey(User, on_delete=models.CASCADE)
+    review=models.CharField(max_length=100, null=True)
+    rating=models.FloatField()    
+
+    def __str__(self):
+        return self.review
+
+class ReviewRatingSocheko(models.Model):
+    product=models.ForeignKey(socheko_product, on_delete=models.CASCADE)        
+    user=models.ForeignKey(User, on_delete=models.CASCADE)
+    review=models.CharField(max_length=100, null=True)
+    rating=models.FloatField()    
+
+    def __str__(self):
+        return self.review
 

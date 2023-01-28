@@ -5,31 +5,33 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import logout, authenticate, login
 import requests
-from bs4 import BeautifulSoup
+
 import random
 from .models import ScrappedProduct,recommend_product,sastodeal_product,recommend_product_sastodeal,socheko_product,recommend_product_socheko
 import numpy as np
 from django.core.paginator import Paginator
+from .models import ReviewRatingDaraz, ReviewRatingSocheko, ReviewRatingSastodeal
+from .forms import ReviewFormDaraz, ReviewFormSastodeal, ReviewFormSocheko
 
 import pickle
 # from daraz
 # popular_df= pickle.load(open('home/result_daraz.pkl','rb'))
-pt= pickle.load(open('home/pt_daraz.pkl','rb'))
-similarity_score= pickle.load(open('home/similarity_score_daraz.pkl','rb'))
-final_data= pickle.load(open('home/final_data_daraz.pkl','rb'))
+pt= pickle.load(open('home/data/pt_daraz.pkl','rb'))
+similarity_score= pickle.load(open('home/data/similarity_score_daraz.pkl','rb'))
+final_data= pickle.load(open('home/data/final_data_daraz.pkl','rb'))
 
 
 # from sastodeal
 # popular_df= pickle.load(open('home/result_sastodeal.pkl','rb'))
-pt_sastodeal= pickle.load(open('home/pt_sastodeal.pkl','rb'))
-similarity_score_sastodeal= pickle.load(open('home/similarity_score_sastodeal.pkl','rb'))
-final_data_sastodeal= pickle.load(open('home/final_data_sastodeal.pkl','rb'))
+pt_sastodeal= pickle.load(open('home/data/pt_sastodeal.pkl','rb'))
+similarity_score_sastodeal= pickle.load(open('home/data/similarity_score_sastodeal.pkl','rb'))
+final_data_sastodeal= pickle.load(open('home/data/final_data_sastodeal.pkl','rb'))
 
 # from socheko
-popular_df= pickle.load(open('home/result_socheko.pkl','rb'))
-pt_socheko= pickle.load(open('home/pt_socheko.pkl','rb'))
-similarity_score_socheko= pickle.load(open('home/similarity_score_socheko.pkl','rb'))
-final_data_socheko= pickle.load(open('home/final_data_socheko.pkl','rb'))
+popular_df= pickle.load(open('home/data/result_socheko.pkl','rb'))
+pt_socheko= pickle.load(open('home/data/pt_socheko.pkl','rb'))
+similarity_score_socheko= pickle.load(open('home/data/similarity_score_socheko.pkl','rb'))
+final_data_socheko= pickle.load(open('home/data/final_data_socheko.pkl','rb'))
 
 # to insert data into database
 
@@ -82,8 +84,12 @@ if products == 0:
 
 
 def productDetail(request,productId):
+  u_name=request.user.username
+  if u_name=='':
+    u_name="my account"
   productFromDB = ScrappedProduct.objects.get(pk=productId)
   product = {
+    'id':productId,
     'title':productFromDB.title,
     'image':productFromDB.image,
     'rating':productFromDB.rating,
@@ -129,13 +135,23 @@ def productDetail(request,productId):
         
    
   recommendproductfromDB = recommend_product.objects.all()
+  dict={
+    'product':product,
+     'data':recommendproductfromDB,
+     'user_name':u_name
+  }
 
-  return render(request,"productDetail.html",{'product':product, 'data':recommendproductfromDB})
+  return render(request,"productDetail.html",dict)
 
 
 def recommendDetail(request,productId):
+  u_name=request.user.username
+  if u_name=='':
+    u_name="my account"
+
   productFromDB = recommend_product.objects.get(pk=productId)
   product = {
+    'id':productId,
     'title':productFromDB.title,
     'image':productFromDB.image,
     'rating':productFromDB.rating,
@@ -182,13 +198,17 @@ def recommendDetail(request,productId):
    
   recommendproductfromDB = recommend_product.objects.all()
 
-  return render(request,"productDetail.html",{'product':product, 'data':recommendproductfromDB})
+  return render(request,"productDetail.html",{'product':product, 'data':recommendproductfromDB, 'user_name':u_name})
 
 # end of daraz recommendation system
 #start of sastodeal recommendation system
 def product_detail_sastodeal(request, productId):
+  u_name=request.user.username
+  if u_name=='':
+    u_name="my account"
   productFromDB = sastodeal_product.objects.get(pk=productId)
   product = {
+    'id':productId,
     'title':productFromDB.title,
     'image':productFromDB.image,
     'rating':productFromDB.rating,
@@ -227,12 +247,16 @@ def product_detail_sastodeal(request, productId):
    
   recommendproductfromDB = recommend_product_sastodeal.objects.all()
 
-  return render(request,"productDetailsastodeal.html",{'product':product, 'data':recommendproductfromDB})
+  return render(request,"productDetailsastodeal.html",{'product':product, 'data':recommendproductfromDB, 'user_name':u_name})
 
 
 def recommend_detail_sastodeal(request, productId):
+  u_name=request.user.username
+  if u_name=='':
+    u_name="my account"
   productFromDB = recommend_product_sastodeal.objects.get(pk=productId)
   product = {
+    'id':productId,
     'title':productFromDB.title,
     'image':productFromDB.image,
     'rating':productFromDB.rating,
@@ -271,15 +295,19 @@ def recommend_detail_sastodeal(request, productId):
    
   recommendproductfromDB = recommend_product_sastodeal.objects.all()
 
-  return render(request,"productDetailsastodeal.html",{'product':product, 'data':recommendproductfromDB})
+  return render(request,"productDetailsastodeal.html",{'product':product, 'data':recommendproductfromDB, 'user_name':u_name})
 
 
   # end of sastodeal system
 
   #start of socheko system
 def product_detail_socheko(request, productId):
+  u_name=request.user.username
+  if u_name=='':
+    u_name="my account"
   productFromDB = socheko_product.objects.get(pk=productId)
   product = {
+    'id':productId,
     'title':productFromDB.title,
     'image':productFromDB.image,
     'rating':productFromDB.rating,
@@ -317,11 +345,15 @@ def product_detail_socheko(request, productId):
         
    
   recommendproductfromDB = recommend_product_socheko.objects.all()
-  return render(request, 'productDetailsocheko.html',{'product':product, 'data':recommendproductfromDB})
+  return render(request, 'productDetailsocheko.html',{'product':product, 'data':recommendproductfromDB, 'user_name':u_name})
 
 def recommend_detail_socheko(request, productId):
+  u_name=request.user.username
+  if u_name=='':
+    u_name="my account"
   productFromDB = recommend_product_socheko.objects.get(pk=productId)
   product = {
+    'id':productId,
     'title':productFromDB.title,
     'image':productFromDB.image,
     'rating':productFromDB.rating,
@@ -359,7 +391,7 @@ def recommend_detail_socheko(request, productId):
         
    
   recommendproductfromDB = recommend_product_socheko.objects.all()
-  return render(request, 'productDetailsocheko.html',{'product':product, 'data':recommendproductfromDB})
+  return render(request, 'productDetailsocheko.html',{'product':product, 'data':recommendproductfromDB, 'user_name':u_name})
 
 
 
@@ -389,14 +421,20 @@ def index(request):
 
 #start of about page
 def about(request):
+   u_name=request.user.username
+   if u_name=='':
+     u_name="my account"
    
-   return render(request, "about.html")
+   return render(request, "about.html",{"user_name":u_name})
 
    # end of about page
 
    #start of contact page
 
 def contact(request):
+  u_name=request.user.username
+  if u_name=='':
+    u_name="my account"
   #this is process of sending information of user in the database.
 
   if request.method == "POST":
@@ -406,7 +444,7 @@ def contact(request):
      contact = Contact(name=name,email=email,desc=desc,date=datetime.today())
      contact.save()
      messages.success(request, 'Your message has been sent!')
-  return render(request, "contact.html")
+  return render(request, "contact.html",{"user_name":u_name})
 
 #end of contact page
 
@@ -478,6 +516,9 @@ def handleSignup(request):
 #daraz
 
 def daraz(request):
+  u_name=request.user.username
+  if u_name=='':
+    u_name="my account"
 
   productsFromDB = ScrappedProduct.objects.get_queryset().order_by('id')
   paginator=Paginator(productsFromDB, 50)
@@ -486,11 +527,14 @@ def daraz(request):
     page_number=1
   product=paginator.get_page(page_number)
   
-  return render(request, "daraz.html",{'popularlist':product ,'page_number':page_number})
+  return render(request, "daraz.html",{'popularlist':product ,'page_number':page_number, 'user_name':u_name})
 
 #sastodeal
 
 def sastodeal(request):
+  u_name=request.user.username
+  if u_name=='':
+    u_name="my account"
 
   sastodealproduct = sastodeal_product.objects.get_queryset().order_by('id')
   paginator=Paginator(sastodealproduct, 50)
@@ -499,14 +543,93 @@ def sastodeal(request):
     page_number=1
   product=paginator.get_page(page_number)
   
-  return render(request, "sastodeal.html",{ 'page_number':page_number, 'sastodealproduct':product})
+  return render(request, "sastodeal.html",{ 'page_number':page_number, 'sastodealproduct':product, 'user_name':u_name})
 
 #socheko
 def socheko(request):
+  u_name=request.user.username
+  if u_name=='':
+    u_name="my account"
   sochekoproduct = socheko_product.objects.get_queryset().order_by('id')
   paginator=Paginator(sochekoproduct, 50)
   page_number=request.GET.get('page')
   if page_number==None:
     page_number=1
   product=paginator.get_page(page_number)
-  return render(request, "socheko.html",{ 'page_number':page_number, 'sochekoproduct':product})
+  return render(request, "socheko.html",{ 'page_number':page_number, 'sochekoproduct':product, 'user_name':u_name})
+
+
+# review and rating
+def submit_review_daraz(request, product_id):
+    url=request.META.get('HTTP_REFERER')
+    
+    if request.method=='POST':
+        try:
+            reviews = ReviewRatingDaraz.objects.get(user__id=request.user.id, product__id=product_id)
+            form = ReviewFormDaraz(request.POST, instance=reviews)
+            form.save()
+            messages.success(request, 'Thank you! your review has been updated.')
+            return redirect(url)
+
+        except ReviewRatingDaraz.DoesNotExist:
+            form = ReviewFormDaraz(request.POST)
+            if form.is_valid():
+                data = ReviewRatingDaraz()
+                data.review = form.cleaned_data['review']
+                data.rating = form.cleaned_data['rating']
+                data.product_id = product_id
+                data.user_id = request.user.id
+                data.save()
+                messages.success(request, 'Thank you! your review has been submitted.')
+                return redirect(url)
+    return render(request, 'productDetail.html')
+
+
+def submit_review_sastodeal(request, product_id):
+    url=request.META.get('HTTP_REFERER')
+    
+    if request.method=='POST':
+        try:
+            reviews = ReviewRatingSastodeal.objects.get(user__id=request.user.id, product__id=product_id)
+            form = ReviewFormSastodeal(request.POST, instance=reviews)
+            form.save()
+            messages.success(request, 'Thank you! your review has been updated.')
+            return redirect(url)
+
+        except ReviewRatingSastodeal.DoesNotExist:
+            form = ReviewFormSastodeal(request.POST)
+            if form.is_valid():
+                data = ReviewRatingSastodeal()
+                data.review = form.cleaned_data['review']
+                data.rating = form.cleaned_data['rating']
+                data.product_id = product_id
+                data.user_id = request.user.id
+                data.save()
+                messages.success(request, 'Thank you! your review has been submitted.')
+                return redirect(url)
+    return render(request, 'productDetailsastodeal.html')
+
+
+def submit_review_socheko(request, product_id):
+    url=request.META.get('HTTP_REFERER')
+    
+    if request.method=='POST':
+        try:
+            reviews = ReviewRatingSocheko.objects.get(user__id=request.user.id, product__id=product_id)
+            form = ReviewFormSocheko(request.POST, instance=reviews)
+            form.save()
+            messages.success(request, 'Thank you! your review has been updated.')
+            return redirect(url)
+
+        except ReviewRatingSocheko.DoesNotExist:
+            form = ReviewFormSocheko(request.POST)
+            if form.is_valid():
+                data = ReviewRatingSocheko()
+                data.review = form.cleaned_data['review']
+                data.rating = form.cleaned_data['rating']
+                data.product_id = product_id
+                data.user_id = request.user.id
+                data.save()
+                messages.success(request, 'Thank you! your review has been submitted.')
+                return redirect(url)
+    return render(request, 'productDetailsocheko.html')
