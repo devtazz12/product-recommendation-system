@@ -41,7 +41,7 @@
 
     <div class="mb-3">
       <label for="textarea">Review:</label> <br>
-      <textarea class="form-control" name="review" rows="3"></textarea><br>
+      <textarea class="form-control" name="review" rows="3" requiered></textarea><br>
     </div>
     <div class="mb-3">
       <label for="rating">Rating:</label><br>
@@ -93,7 +93,6 @@
                <small class="text-muted">{{i.perdis}} </small>
                
               </div>
-              <a href="{% url 'recommend_product_detail' i.id %}" >Detail</a>
             </div>
           </div>
         </div>

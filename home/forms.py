@@ -7,6 +7,7 @@ class ReviewFormDaraz(forms.ModelForm):
         model = ReviewRatingDaraz
         fields =['review','rating']
 
+
 class ReviewFormSastodeal(forms.ModelForm):
     class Meta:
         model = ReviewRatingSastodeal

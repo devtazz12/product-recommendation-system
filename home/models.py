@@ -91,7 +91,7 @@ class recommend_product_socheko(models.Model):
     def __str__(self):
         return self.title
 
-
+# review and rating  daraz
 class ReviewRatingDaraz(models.Model):
     product=models.ForeignKey(ScrappedProduct, on_delete=models.CASCADE)        
     user=models.ForeignKey(User, on_delete=models.CASCADE)
@@ -100,6 +100,9 @@ class ReviewRatingDaraz(models.Model):
 
     def __str__(self):
         return self.review
+
+
+
 
 class ReviewRatingSastodeal(models.Model):
     product=models.ForeignKey(sastodeal_product, on_delete=models.CASCADE)        

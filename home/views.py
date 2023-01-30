@@ -12,6 +12,8 @@ import numpy as np
 from django.core.paginator import Paginator
 from .models import ReviewRatingDaraz, ReviewRatingSocheko, ReviewRatingSastodeal
 from .forms import ReviewFormDaraz, ReviewFormSastodeal, ReviewFormSocheko
+import pandas as pd
+from sklearn.metrics.pairwise import cosine_similarity
 
 import pickle
 # from daraz
@@ -144,62 +146,6 @@ def productDetail(request,productId):
   return render(request,"productDetail.html",dict)
 
 
-def recommendDetail(request,productId):
-  u_name=request.user.username
-  if u_name=='':
-    u_name="my account"
-
-  productFromDB = recommend_product.objects.get(pk=productId)
-  product = {
-    'id':productId,
-    'title':productFromDB.title,
-    'image':productFromDB.image,
-    'rating':productFromDB.rating,
-    'link': productFromDB.link,
-    'price': productFromDB.price,
-    'dprice':productFromDB.dprice,
-    'perdis':productFromDB.perdis
-  }
-
-
-  user_input=productFromDB.title
-  
-  index=np.where(pt.index==user_input)[0][0]
-  similar_items = sorted(list(enumerate(similarity_score[index])), key=lambda x:x[1],reverse=True)[1:5]
-  recommend_product.objects.all().delete()
-  for i in similar_items:
-    item={}
-    temp_df=final_data[final_data['title--wFj93']==pt.index[i[0]]]
-    title= temp_df.drop_duplicates('title--wFj93')['title--wFj93'].values
-    item['title']=title[0]
-    link=temp_df.drop_duplicates('title--wFj93')['mainPic--ehOdr href'].values
-    img_url=temp_df.drop_duplicates('title--wFj93')['image--WOyuZ src'].values
-    rating=temp_df.drop_duplicates('title--wFj93')['rating'].values
-    price=temp_df.drop_duplicates('title--wFj93')['currency--GVKjl 2'].values
-    dprice=temp_df.drop_duplicates('title--wFj93')['currency--GVKjl'].values
-    perdis=temp_df.drop_duplicates('title--wFj93')['discount--HADrg'].values
-    item['image']=img_url[0]
-    item['rating']=rating[0]
-    item['link']=link[0]
-    item['price']=price[0]
-    item['dprice']=dprice[0]
-    item['perdis']=perdis[0]
-    
-    recommend_product.objects.create(
-        title = title[0],
-        image = img_url[0],
-        rating = rating[0],
-        link= link[0],
-        price= price[0],
-        dprice= dprice[0],
-        perdis= perdis[0]
-      )
-        
-   
-  recommendproductfromDB = recommend_product.objects.all()
-
-  return render(request,"productDetail.html",{'product':product, 'data':recommendproductfromDB, 'user_name':u_name})
-
 # end of daraz recommendation system
 #start of sastodeal recommendation system
 def product_detail_sastodeal(request, productId):
@@ -250,53 +196,6 @@ def product_detail_sastodeal(request, productId):
   return render(request,"productDetailsastodeal.html",{'product':product, 'data':recommendproductfromDB, 'user_name':u_name})
 
 
-def recommend_detail_sastodeal(request, productId):
-  u_name=request.user.username
-  if u_name=='':
-    u_name="my account"
-  productFromDB = recommend_product_sastodeal.objects.get(pk=productId)
-  product = {
-    'id':productId,
-    'title':productFromDB.title,
-    'image':productFromDB.image,
-    'rating':productFromDB.rating,
-    'link': productFromDB.link,
-    'dprice':productFromDB.dprice,
-  }
-
-
-  user_input=productFromDB.title
-  
-  index=np.where(pt_sastodeal.index==user_input)[0][0]
-  similar_items = sorted(list(enumerate(similarity_score_sastodeal[index])), key=lambda x:x[1],reverse=True)[1:5]
-  recommend_product_sastodeal.objects.all().delete()
-  for i in similar_items:
-    item={}
-    temp_df=final_data_sastodeal[final_data_sastodeal['product-item-link']==pt_sastodeal.index[i[0]]]
-    title= temp_df.drop_duplicates('product-item-link')['product-item-link'].values
-    item['title']=title[0]
-    link=temp_df.drop_duplicates('product-item-link')['product href'].values
-    img_url=temp_df.drop_duplicates('product-item-link')['product-image-wrapper src'].values
-    rating=temp_df.drop_duplicates('product-item-link')['rating'].values
-    dprice=temp_df.drop_duplicates('product-item-link')['price'].values
-    item['image']=img_url[0]
-    item['rating']=rating[0]
-    item['link']=link[0]
-    item['dprice']=dprice[0]
-    
-    recommend_product_sastodeal.objects.create(
-        title = title[0],
-        image = img_url[0],
-        rating = rating[0],
-        link= link[0],
-        dprice= dprice[0],
-      )
-        
-   
-  recommendproductfromDB = recommend_product_sastodeal.objects.all()
-
-  return render(request,"productDetailsastodeal.html",{'product':product, 'data':recommendproductfromDB, 'user_name':u_name})
-
 
   # end of sastodeal system
 
@@ -314,10 +213,8 @@ def product_detail_socheko(request, productId):
     'link': productFromDB.link,
     'dprice':productFromDB.dprice,
   }
-
-
   user_input=productFromDB.title
-  
+
   index=np.where(pt_socheko.index==user_input)[0][0]
   similar_items = sorted(list(enumerate(similarity_score_socheko[index])), key=lambda x:x[1],reverse=True)[1:5]
   recommend_product_socheko.objects.all().delete()
@@ -342,56 +239,11 @@ def product_detail_socheko(request, productId):
         link= link[0],
         dprice= dprice[0],
       )
-        
-   
-  recommendproductfromDB = recommend_product_socheko.objects.all()
-  return render(request, 'productDetailsocheko.html',{'product':product, 'data':recommendproductfromDB, 'user_name':u_name})
-
-def recommend_detail_socheko(request, productId):
-  u_name=request.user.username
-  if u_name=='':
-    u_name="my account"
-  productFromDB = recommend_product_socheko.objects.get(pk=productId)
-  product = {
-    'id':productId,
-    'title':productFromDB.title,
-    'image':productFromDB.image,
-    'rating':productFromDB.rating,
-    'link': productFromDB.link,
-    'dprice':productFromDB.dprice,
-  }
-
-
-  user_input=productFromDB.title
   
-  index=np.where(pt_socheko.index==user_input)[0][0]
-  similar_items = sorted(list(enumerate(similarity_score_socheko[index])), key=lambda x:x[1],reverse=True)[1:5]
-  recommend_product_socheko.objects.all().delete()
-  for i in similar_items:
-    item={}
-    temp_df=final_data_socheko[final_data_socheko['title']==pt_socheko.index[i[0]]]
-    title= temp_df.drop_duplicates('title')['title'].values
-    item['title']=title[0]
-    link=temp_df.drop_duplicates('title')['link'].values
-    img_url=temp_df.drop_duplicates('title')['image'].values
-    rating=temp_df.drop_duplicates('title')['rating'].values
-    dprice=temp_df.drop_duplicates('title')['dprice'].values
-    item['image']=img_url[0]
-    item['rating']=rating[0]
-    item['link']=link[0]
-    item['dprice']=dprice[0]
-    
-    recommend_product_socheko.objects.create(
-        title = title[0],
-        image = img_url[0],
-        rating = rating[0],
-        link= link[0],
-        dprice= dprice[0],
-      )
-        
-   
   recommendproductfromDB = recommend_product_socheko.objects.all()
   return render(request, 'productDetailsocheko.html',{'product':product, 'data':recommendproductfromDB, 'user_name':u_name})
+
+
 
 
 
@@ -404,6 +256,7 @@ def index(request):
   u_name=request.user.username
   if u_name=='':
     u_name="my account"
+
   productsFromDB = ScrappedProduct.objects.all()[98:102]
   sastodealproduct = sastodeal_product.objects.all()[0:4]
   sochekoproduct = socheko_product.objects.all()[0:4]
@@ -613,7 +466,7 @@ def submit_review_sastodeal(request, product_id):
 def submit_review_socheko(request, product_id):
     url=request.META.get('HTTP_REFERER')
     
-    if request.method=='POST':
+    if request.method=="POST":
         try:
             reviews = ReviewRatingSocheko.objects.get(user__id=request.user.id, product__id=product_id)
             form = ReviewFormSocheko(request.POST, instance=reviews)
@@ -632,4 +485,5 @@ def submit_review_socheko(request, product_id):
                 data.save()
                 messages.success(request, 'Thank you! your review has been submitted.')
                 return redirect(url)
+                
     return render(request, 'productDetailsocheko.html')

@@ -30,16 +30,12 @@ urlpatterns = [
     
 #    for daraz
     path("product_detail/<int:productId>", views.productDetail,name="product_detail"),
-    path("recommend_product_detail/<int:productId>", views.recommendDetail,name="recommend_product_detail"),
-
     # for sastodeal
     path("product_detail_sastodeal/<int:productId>", views.product_detail_sastodeal,name="product_detail_sastodeal"),
-    path("recommend_detail_sastodeal/<int:productId>", views.recommend_detail_sastodeal,name="recommend_detail_sastodeal"),
 
 
     # for socheko
     path("product_detail_socheko/<int:productId>", views.product_detail_socheko,name="product_detail_socheko"),
-    path("recommend_detail_socheko/<int:productId>", views.recommend_detail_socheko,name="recommend_detail_socheko"),
 
 
 
