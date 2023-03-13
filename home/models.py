@@ -95,7 +95,7 @@ class recommend_product_socheko(models.Model):
 class ReviewRatingDaraz(models.Model):
     product=models.ForeignKey(ScrappedProduct, on_delete=models.CASCADE)        
     user=models.ForeignKey(User, on_delete=models.CASCADE)
-    review=models.CharField(max_length=100, null=True)
+    review=models.CharField(max_length=100, blank=True)
     rating=models.FloatField()    
 
     def __str__(self):
@@ -107,7 +107,7 @@ class ReviewRatingDaraz(models.Model):
 class ReviewRatingSastodeal(models.Model):
     product=models.ForeignKey(sastodeal_product, on_delete=models.CASCADE)        
     user=models.ForeignKey(User, on_delete=models.CASCADE)
-    review=models.CharField(max_length=100, null=True)
+    review=models.CharField(max_length=100, blank=True)
     rating=models.FloatField()    
 
     def __str__(self):
@@ -116,7 +116,7 @@ class ReviewRatingSastodeal(models.Model):
 class ReviewRatingSocheko(models.Model):
     product=models.ForeignKey(socheko_product, on_delete=models.CASCADE)        
     user=models.ForeignKey(User, on_delete=models.CASCADE)
-    review=models.CharField(max_length=100, null=True)
+    review=models.CharField(max_length=100, blank=True)
     rating=models.FloatField()    
 
     def __str__(self):
