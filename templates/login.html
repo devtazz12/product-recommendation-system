@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -99,7 +100,7 @@
     <div class="form-signin text-center background">
       <form method="post" action="/login" >
           {% csrf_token %}
-        <h1 class="h3 mb-3 fw-normal text-light"><b>SIGNIN HERE</b></h1>
+        <h1 class="h3 mb-3 fw-normal text-light"><b>SIGNIN HERE: <a class="display-font-weight-10 text-decoration-none" href="/">home</a></b></h1>
         {%if error%}
       <div class="alert alert-danger" role="alert">
         {{error}}

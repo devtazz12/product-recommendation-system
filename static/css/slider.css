@@ -1,0 +1,32 @@
+.slider {
+    overflow: hidden;
+    height: 50px;
+  }
+  
+  .slider ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    animation: slide 15s infinite;
+  }
+  
+  .slider li {
+    width: 100%;
+  }
+  
+  .slider li span {
+    display: inline-block;
+    width: 100%;
+  }
+  
+  @keyframes slide {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+  
