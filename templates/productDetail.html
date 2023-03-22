@@ -59,7 +59,9 @@
        
       </div>
     </div>
+    {% if user.is_authenticated %}
     <button type="submit" class="btn btn-primary">Submit</button>
+    {% endif %}
   </form>
 </div>
 

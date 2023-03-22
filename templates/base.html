@@ -172,7 +172,9 @@
             </button>
             <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
               <li><a class="dropdown-item" href="/login">login</a></li>
+              {% if user.is_authenticated %}
               <li><a class="dropdown-item" href="/logout">logout</a></li>
+              {% endif %}
             </ul>
           </div>
         </div>
