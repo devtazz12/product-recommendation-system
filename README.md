@@ -7,9 +7,6 @@ this project recommended the product using collabritive filtering with knn algor
 you must have to install
 
 ```bash
-  BeautifulSoup
-```
-```bash
   numpy
 ```
 ```bash
